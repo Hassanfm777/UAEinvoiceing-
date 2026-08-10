@@ -1,378 +1,341 @@
 <!DOCTYPE html>
-<html lang="en" dir="ltr">
+<html lang="ar" dir="rtl">
 <head>
     <meta charset="UTF-8">
-    <title>Customer Invoice - Odoo Style</title>
-    <script type="text/javascript" src="https://gc.kis.v2.scr.kaspersky-labs.com/FD126C42-EBFA-4E12-B309-BB3FDD723AC1/main.js?attr=CvYOBrnGWWjbePc_jl6rsZODh0D5DzPeaurmN0aQp4_syKjYIs6NmY_qpogufxRcCcBHjt1eHnUXv2cpa8Nl0S1nvK2Ozk1t3Zd2oUxCxCBpUM9bTNZV9-aew_dzCR5rIMpuPEoAL974cIR2m1cxpCZmIbgbbiv2VcQ-rUiESE_l7Q1JNfcYpYLOqeXS6LlLxfD1NQlbKJqOmHJ3mISwvJtLcdsRxv7lf_gqHZSpFm7zTUjW4Els-W84GdPvsPE9mK4PvH1LiyStlPXUKOYY7Z5r5CREkjI3-Q7ZxQ3n4gAeezrro3suGBeGNSmbVN8AGT6G-ZexOsJBpOz3X_hFDg" charset="UTF-8"></script><link rel="stylesheet" crossorigin="anonymous" href="https://gc.kis.v2.scr.kaspersky-labs.com/E3E8934C-235A-4B0E-825A-35A08381A191/abn/main.css?attr=aHR0cHM6Ly9jb250cmlidXRpb24udXNlcmNvbnRlbnQuZ29vZ2xlLmNvbS9kb3dubG9hZD9jPUNneGlZWEprWDNOMGIzSmhaMlVTVUJJTmNtVnpjRzl1YzJWZlpHRjBZUm9fQ2pBd1l6Sm1NVFE1WkdObFpXRmhaamt3TURBd05qVTRZV1UwT0dVek56QmxNakEzWm1RNU1XWmpNV013TXpVNVlqQVNDeElIRUpfWnNMMzNCQmdCJmZpbGVuYW1lPW9kb29faW52b2ljZS5odG1sJm9waT0xMDMxMzUwNTAmYXV0aHVzZXI9MQ"/><style>
+    <title>UAE E-Invoicing - فاتورة إلكترونية ضريبية</title>
+    <style>
         :root {
-            --primary-color: #017e84;
-            --border-color: #dee2e6;
-            --bg-color: #f8f9fa;
-            --text-color: #212529;
+            --primary: #0f4c81;
+            --secondary: #2b6cb0;
+            --accent: #319795;
+            --border: #e2e8f0;
+            --bg-light: #f7fafc;
+            --text-main: #2d3748;
         }
         body {
-            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
-            background-color: #e9ecef;
-            color: var(--text-color);
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background-color: #edf2f7;
+            color: var(--text-main);
             margin: 0;
             padding: 20px;
+            direction: rtl;
         }
-        .app-container {
+        .container {
             max-width: 900px;
             margin: 0 auto;
         }
         .control-panel {
             background: #ffffff;
-            padding: 15px 20px;
+            padding: 15px 25px;
             border-radius: 8px;
-            box-shadow: 0 2px 4px rgba(0,0,0,0.05);
+            box-shadow: 0 4px 6px rgba(0,0,0,0.05);
             margin-bottom: 20px;
             display: flex;
             justify-content: space-between;
             align-items: center;
         }
         .btn {
-            background-color: var(--primary-color);
+            background-color: var(--primary);
             color: white;
             border: none;
             padding: 10px 20px;
-            border-radius: 4px;
+            border-radius: 6px;
             cursor: pointer;
             font-size: 14px;
             font-weight: 600;
             transition: background 0.2s;
         }
-        .btn:hover {
-            background-color: #016368;
-        }
-        .btn-secondary {
-            background-color: #6c757d;
-        }
-        .btn-secondary:hover {
-            background-color: #5a6268;
-        }
-        .btn-danger {
-            background-color: #dc3545;
-            padding: 5px 10px;
-            font-size: 12px;
-        }
-        .btn-danger:hover {
-            background-color: #bd2130;
-        }
-        .invoice-card {
+        .btn:hover { background-color: #0c3b63; }
+        .btn-secondary { background-color: #4a5568; }
+        .btn-secondary:hover { background-color: #2d3748; }
+        .btn-danger { background-color: #e53e3e; padding: 6px 12px; font-size: 12px; }
+        .btn-danger:hover { background-color: #c53030; }
+
+        .invoice-box {
             background: #ffffff;
-            border-radius: 8px;
-            box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+            border-radius: 10px;
+            box-shadow: 0 10px 25px rgba(0,0,0,0.08);
             padding: 40px;
             position: relative;
-            overflow: hidden;
         }
-        /* Ribbon banner */
-        .ribbon {
-            position: absolute;
-            right: -45px;
-            top: 25px;
-            transform: rotate(45deg);
-            background-color: #28a745;
-            color: white;
-            padding: 6px 50px;
-            font-size: 11px;
-            font-weight: bold;
-            text-transform: uppercase;
-            letter-spacing: 1px;
-            box-shadow: 0 2px 5px rgba(0,0,0,0.2);
-        }
-        .invoice-header-top {
+        .invoice-header {
             display: flex;
             justify-content: space-between;
-            margin-bottom: 30px;
+            border-bottom: 2px solid var(--border);
+            padding-bottom: 25px;
+            margin-bottom: 25px;
         }
-        .invoice-title-section h3 {
+        .company-info h2 {
             margin: 0 0 5px 0;
-            color: #6c757d;
-            font-size: 14px;
-            font-weight: 500;
+            color: var(--primary);
+            font-size: 22px;
         }
-        .invoice-title-section h1 {
+        .company-info p, .invoice-meta p {
+            margin: 3px 0;
+            font-size: 13px;
+            color: #4a5568;
+        }
+        .invoice-title-box {
+            text-align: left;
+        }
+        .invoice-title-box h1 {
             margin: 0;
-            color: var(--primary-color);
-            font-size: 28px;
+            color: var(--primary);
+            font-size: 26px;
         }
-        .invoice-meta {
+        .invoice-title-box span {
+            font-size: 13px;
+            color: #718096;
+        }
+
+        .parties-grid {
             display: grid;
             grid-template-columns: 1fr 1fr;
-            gap: 20px;
+            gap: 30px;
             margin-bottom: 30px;
-            font-size: 14px;
+            background: var(--bg-light);
+            padding: 20px;
+            border-radius: 8px;
+            border: 1px solid var(--border);
         }
-        .meta-group {
-            margin-bottom: 12px;
-            display: flex;
-            align-items: baseline;
+        .party-card h3 {
+            margin: 0 0 10px 0;
+            font-size: 15px;
+            color: var(--primary);
+            border-bottom: 1px solid #cbd5e0;
+            padding-bottom: 5px;
         }
-        .meta-label {
-            font-weight: 500;
-            color: #495057;
-            width: 140px;
-            flex-shrink: 0;
-        }
-        .meta-value {
-            color: #212529;
-            flex-grow: 1;
-        }
+
         .editable {
             border: 1px dashed transparent;
-            padding: 2px 6px;
+            padding: 3px 6px;
             border-radius: 4px;
             width: 100%;
             box-sizing: border-box;
             font-family: inherit;
             font-size: inherit;
+            background: transparent;
         }
         .editable:hover, .editable:focus {
-            border-color: var(--primary-color);
-            background: #fdfefe;
+            border-color: var(--accent);
+            background: #fff;
             outline: none;
         }
         input.editable, select.editable, textarea.editable {
-            border: 1px solid var(--border-color);
+            border: 1px solid var(--border);
             padding: 6px 10px;
             border-radius: 4px;
-        }
-        input.editable:focus, select.editable:focus, textarea.editable:focus {
-            border-color: var(--primary-color);
-            box-shadow: 0 0 0 2px rgba(1, 126, 132, 0.15);
-        }
-        /* Tabs */
-        .tabs {
-            display: flex;
-            border-bottom: 1px solid var(--border-color);
-            margin-bottom: 25px;
-        }
-        .tab {
-            padding: 10px 20px;
-            cursor: pointer;
-            font-weight: 500;
-            color: #6c757d;
-            border-bottom: 2px solid transparent;
-            margin-bottom: -1px;
-        }
-        .tab.active {
-            color: var(--primary-color);
-            border-bottom-color: var(--primary-color);
             background: #fff;
         }
+
+        .meta-row {
+            display: flex;
+            margin-bottom: 8px;
+            font-size: 13px;
+        }
+        .meta-label {
+            font-weight: 600;
+            width: 130px;
+            color: #4a5568;
+        }
+        .meta-val {
+            flex-grow: 1;
+        }
+
         /* Table */
-        .invoice-table {
+        table.items-table {
             width: 100%;
             border-collapse: collapse;
             margin-bottom: 25px;
         }
-        .invoice-table th {
-            text-align: left;
+        table.items-table th {
+            background-color: var(--primary);
+            color: white;
+            text-align: right;
             padding: 12px 10px;
-            border-bottom: 2px solid var(--border-color);
-            color: #495057;
             font-size: 13px;
             font-weight: 600;
         }
-        .invoice-table td {
-            padding: 12px 10px;
-            border-bottom: 1px solid var(--border-color);
-            font-size: 14px;
+        table.items-table td {
+            padding: 10px;
+            border-bottom: 1px solid var(--border);
+            font-size: 13px;
             vertical-align: middle;
         }
-        .text-right { text-align: right; }
         .text-center { text-align: center; }
-        
-        /* Totals Section */
-        .totals-section {
+        .text-left { text-align: left; }
+
+        /* Totals & QR */
+        .summary-section {
             display: flex;
             justify-content: space-between;
-            margin-top: 30px;
             align-items: flex-start;
+            margin-top: 30px;
+            border-top: 2px solid var(--border);
+            padding-top: 20px;
         }
-        .terms-box {
-            width: 50%;
-            font-size: 13px;
-            color: #6c757d;
-        }
-        .terms-box textarea {
-            width: 100%;
-            height: 80px;
-            resize: vertical;
+        .qr-placeholder {
+            width: 120px;
+            height: 120px;
+            border: 2px dashed var(--border);
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            background: var(--bg-light);
+            border-radius: 6px;
+            text-align: center;
+            font-size: 11px;
+            color: #718096;
         }
         .totals-table {
-            width: 40%;
+            width: 45%;
             border-collapse: collapse;
         }
         .totals-table td {
-            padding: 8px 10px;
+            padding: 8px 12px;
             font-size: 14px;
-            border-bottom: 1px solid var(--border-color);
+            border-bottom: 1px solid var(--border);
         }
         .totals-table tr:last-child td {
             font-weight: bold;
             font-size: 16px;
-            color: var(--primary-color);
-            border-bottom: 2px solid var(--primary-color);
+            color: var(--primary);
+            border-bottom: 2px solid var(--primary);
+            background-color: var(--bg-light);
         }
-        
-        /* Print styles */
+
         @media print {
-            body {
-                background: white;
-                padding: 0;
-            }
-            .control-panel, .no-print, .btn-danger, .add-row-container {
-                display: none !important;
-            }
-            .invoice-card {
-                box-shadow: none;
-                padding: 0;
-            }
-            .editable {
-                border: none !important;
-                background: transparent !important;
-                padding: 0 !important;
-            }
+            body { background: white; padding: 0; }
+            .control-panel, .no-print, .btn-danger { display: none !important; }
+            .invoice-box { box-shadow: none; padding: 0; }
             input.editable, select.editable, textarea.editable {
                 border: none !important;
                 background: transparent !important;
-                appearance: none;
                 padding: 0 !important;
             }
         }
     </style>
 </head>
 <body>
-    <div class="app-container">
+    <div class="container">
         <!-- Control Panel -->
         <div class="control-panel no-print">
             <div>
-                <h2 style="margin:0; font-size:18px; color:var(--primary-color);">Odoo Invoice Generator</h2>
-                <p style="margin:5px 0 0 0; font-size:12px; color:#6c757d;">قم بتعديل البيانات مباشرة من الحقول أدناه ثم اضغط طباعة PDF</p>
+                <h2 style="margin:0; font-size:18px; color:var(--primary);">UAE Electronic Tax Invoice (FTA Compliant)</h2>
+                <p style="margin:4px 0 0 0; font-size:12px; color:#718096;">قم بتعبئة بيانات المورد والعملاء والأصناف، ثم اضغط طباعة لحفظ PDF</p>
             </div>
             <div>
-                <button class="btn btn-secondary" onclick="addRow()">+ إضافة صنف</button>
-                <button class="btn" onclick="window.print()" style="margin-left: 10px;">🖨️ طباعة / حفظ PDF</button>
+                <button class="btn btn-secondary" onclick="addRow()">+ إضافة صنف (Add Line)</button>
+                <button class="btn" onclick="window.print()" style="margin-right: 10px;">🖨️ طباعة / حفظ PDF</button>
             </div>
         </div>
 
-        <!-- Invoice Card -->
-        <div class="invoice-card">
-            <div class="ribbon">IN PAYMENT</div>
-            
-            <div class="invoice-header-top">
-                <div class="invoice-title-section">
-                    <h3>Customer Invoice</h3>
-                    <h1>
-                        <input type="text" class="editable" value="INV/2026/03043" style="font-size: 28px; font-weight: bold; color: var(--primary-color); width: 300px;">
-                    </h1>
+        <!-- Invoice Box -->
+        <div class="invoice-box">
+            <!-- Header -->
+            <div class="invoice-header">
+                <div class="company-info">
+                    <h2><input type="text" class="editable" value="اسم الشركة الموردة / Supplier Company LLC"></h2>
+                    <p>الشارقة، الإمارات العربية المتحدة | Sharjah, UAE</p>
+                    <p><strong>TRN (رقم التسجيل الضريبي):</strong> <input type="text" class="editable" value="100012345678903" style="width: 180px; display:inline-block;"></p>
                 </div>
-            </div>
-
-            <div class="invoice-meta">
-                <div>
-                    <div class="meta-group">
-                        <span class="meta-label">Customer</span>
-                        <span class="meta-value">
-                            <textarea class="editable" rows="4" style="width:100%; resize:vertical;">Rahib Babat General Trading L.L.C
-Nakheel Centre Shop No.26
-Dubai P.O.Box 124640
-United Arab Emirates – 100053126700003</textarea>
-                        </span>
-                    </div>
-                </div>
-                <div>
-                    <div class="meta-group">
-                        <span class="meta-label">Invoice Date</span>
-                        <span class="meta-value"><input type="text" class="editable" value="10/08/2026"></span>
-                    </div>
-                    <div class="meta-group">
-                        <span class="meta-label">Collection by</span>
-                        <span class="meta-value"><input type="text" class="editable" value=""></span>
-                    </div>
-                    <div class="meta-group">
-                        <span class="meta-label">Collection comments</span>
-                        <span class="meta-value"><input type="text" class="editable" value=""></span>
-                    </div>
-                    <div class="meta-group">
-                        <span class="meta-label">Payment terms</span>
-                        <span class="meta-value"><input type="text" class="editable" value="CASH"></span>
-                    </div>
-                    <div class="meta-group">
-                        <span class="meta-label">Delivery Date</span>
-                        <span class="meta-value"><input type="text" class="editable" value="10/08/2026"></span>
-                    </div>
-                    <div class="meta-group">
-                        <span class="meta-label">Currency</span>
-                        <span class="meta-value"><input type="text" class="editable" value="AED" style="width: 60px;"></span>
-                    </div>
-                    <div class="meta-group">
-                        <span class="meta-label">Sale Representative</span>
-                        <span class="meta-value"><input type="text" class="editable" value="Tamer"></span>
+                <div class="invoice-title-box">
+                    <h1>فاتورة ضريبية</h1>
+                    <span>TAX INVOICE</span>
+                    <div style="margin-top: 10px;">
+                        <input type="text" class="editable" value="INV-2026-001" style="font-weight: bold; font-size: 16px; text-align: left; width: 160px;">
                     </div>
                 </div>
             </div>
 
-            <!-- Tabs -->
-            <div class="tabs no-print">
-                <div class="tab active">Invoice Lines</div>
-                <div class="tab">Journal Items</div>
-                <div class="tab">Other Info</div>
+            <!-- Meta & Parties -->
+            <div class="parties-grid">
+                <div class="party-card">
+                    <h3>بيانات العميل (Customer Details)</h3>
+                    <div class="meta-row" style="margin-top: 10px;">
+                        <span class="meta-label">اسم العميل:</span>
+                        <span class="meta-val"><input type="text" class="editable" value="شركة رعيب بابات للتجارة العامة ذ.م.م"></span>
+                    </div>
+                    <div class="meta-row">
+                        <span class="meta-label">العنوان:</span>
+                        <span class="meta-val"><input type="text" class="editable" value="دبي، ص.ب 124640، الإمارات"></span>
+                    </div>
+                    <div class="meta-row">
+                        <span class="meta-label">رقم التسجيل (TRN):</span>
+                        <span class="meta-val"><input type="text" class="editable" value="100053126700003"></span>
+                    </div>
+                </div>
+                <div class="party-card">
+                    <h3>معلومات الفاتورة (Invoice Details)</h3>
+                    <div class="meta-row" style="margin-top: 10px;">
+                        <span class="meta-label">تاريخ الإصدار:</span>
+                        <span class="meta-val"><input type="text" class="editable" value="2026-08-10"></span>
+                    </div>
+                    <div class="meta-row">
+                        <span class="meta-label">تاريخ التوريد:</span>
+                        <span class="meta-val"><input type="text" class="editable" value="2026-08-10"></span>
+                    </div>
+                    <div class="meta-row">
+                        <span class="meta-label">شروط الدفع:</span>
+                        <span class="meta-val"><input type="text" class="editable" value="نقداً (Cash)"></span>
+                    </div>
+                </div>
             </div>
 
-            <!-- Invoice Lines Table -->
-            <table class="invoice-table">
+            <!-- Items Table -->
+            <table class="items-table">
                 <thead>
                     <tr>
-                        <th style="width: 40%;">Product</th>
-                        <th style="width: 10%;">Quantity</th>
-                        <th style="width: 10%;">UoM</th>
-                        <th style="width: 12%;" class="text-right">Price</th>
-                        <th style="width: 8%;" class="text-center">Taxes</th>
-                        <th style="width: 10%;" class="text-right">VAT Amount</th>
-                        <th style="width: 10%;" class="text-right">Amount</th>
-                        <th style="width: 5%;" class="no-print"></th>
+                        <th style="width: 35%;">الوصف / Description</th>
+                        <th style="width: 10%;" class="text-center">الكمية / Qty</th>
+                        <th style="width: 10%;">الوحدة / UoM</th>
+                        <th style="width: 12%;" class="text-left">السعر / Price</th>
+                        <th style="width: 8%;" class="text-center">الضريبة / Tax</th>
+                        <th style="width: 10%;" class="text-left">مبلغ الضريبة / VAT</th>
+                        <th style="width: 12%;" class="text-left">المجموع / Total</th>
+                        <th style="width: 3%;" class="no-print"></th>
                     </tr>
                 </thead>
                 <tbody id="invoice-items">
                     <tr>
-                        <td><input type="text" class="editable" value="[SV50-3L] 500 Us/Gallon Vertical 3 Layers"></td>
-                        <td><input type="number" class="editable qty" value="1.00" step="0.01" oninput="calculateTotals()"></td>
+                        <td><input type="text" class="editable" value="خزان مياه عمودي 500 غالون (Vertical Tank 500 Gal)"></td>
+                        <td class="text-center"><input type="number" class="editable qty text-center" value="1.00" step="0.01" oninput="calcTotals()"></td>
                         <td><input type="text" class="editable" value="Units"></td>
-                        <td class="text-right"><input type="number" class="editable price text-right" value="650.00" step="0.01" oninput="calculateTotals()"></td>
-                        <td class="text-center"><input type="text" class="editable text-center tax-rate" value="5%" oninput="calculateTotals()"></td>
-                        <td class="text-right vat-amount">32.50 AED</td>
-                        <td class="text-right row-amount">650.00 AED</td>
-                        <td class="text-center no-print"><button class="btn btn-danger" onclick="deleteRow(this)">×</button></td>
+                        <td><input type="number" class="editable price text-left" value="650.00" step="0.01" oninput="calcTotals()"></td>
+                        <td class="text-center"><input type="text" class="editable text-center tax-rate" value="5%" oninput="calcTotals()"></td>
+                        <td class="text-left vat-amount">32.50 AED</td>
+                        <td class="text-left row-amount">682.50 AED</td>
+                        <td class="no-print"><button class="btn btn-danger" onclick="deleteRow(this)">×</button></td>
                     </tr>
                 </tbody>
             </table>
-            
-            <div class="add-row-container no-print" style="margin-bottom: 30px;">
-                <button class="btn btn-secondary" style="font-size: 12px; padding: 6px 12px;" onclick="addRow()">Add a line</button>
+
+            <div class="no-print" style="margin-bottom: 20px;">
+                <button class="btn btn-secondary" style="font-size: 12px; padding: 6px 14px;" onclick="addRow()">+ إضافة سطر جديد</button>
             </div>
 
-            <!-- Totals Section -->
-            <div class="totals-section">
-                <div class="terms-box">
-                    <p style="margin: 0 0 5px 0; font-weight: 500; color: #495057;">Terms and Conditions</p>
-                    <textarea class="editable">Payment due upon receipt. Thank you for your business!</textarea>
+            <!-- Summary & QR -->
+            <div class="summary-section">
+                <div>
+                    <div class="qr-placeholder">
+                        <span>QR Code</span>
+                        <span style="font-size: 9px; margin-top: 4px;">(FTA E-Invoicing)</span>
+                    </div>
+                    <p style="font-size: 11px; color: #718096; margin-top: 8px;">ممتثل لمتطلبات الهيئة الاتحادية للمحاسبة / الضرائب</p>
                 </div>
                 <table class="totals-table">
                     <tr>
-                        <td>Untaxed Amount:</td>
-                        <td class="text-right" id="untaxed-total">650.00 AED</td>
+                        <td>المجموع غير الخاضع للضريبة (Untaxed Amount):</td>
+                        <td class="text-left" id="subtotal">650.00 AED</td>
                     </tr>
                     <tr>
-                        <td>VAT 5%:</td>
-                        <td class="text-right" id="vat-total">32.50 AED</td>
+                        <td>إجمالي ضريبة القيمة المضافة 5% (Total VAT):</td>
+                        <td class="text-left" id="total-vat">32.50 AED</td>
                     </tr>
                     <tr>
-                        <td>Total:</td>
-                        <td class="text-right" id="grand-total">682.50 AED</td>
+                        <td>المجموع الإجمالي (Grand Total):</td>
+                        <td class="text-left" id="grand-total">682.50 AED</td>
                     </tr>
                 </table>
             </div>
@@ -382,60 +345,60 @@ United Arab Emirates – 100053126700003</textarea>
     <script>
         function addRow() {
             const tbody = document.getElementById('invoice-items');
-            const row = document.createElement('tr');
-            row.innerHTML = `
-                <td><input type="text" class="editable" value="New Product"></td>
-                <td><input type="number" class="editable qty" value="1.00" step="0.01" oninput="calculateTotals()"></td>
+            const tr = document.createElement('tr');
+            tr.innerHTML = `
+                <td><input type="text" class="editable" value="صنف جديد (New Item)"></td>
+                <td class="text-center"><input type="number" class="editable qty text-center" value="1.00" step="0.01" oninput="calcTotals()"></td>
                 <td><input type="text" class="editable" value="Units"></td>
-                <td class="text-right"><input type="number" class="editable price text-right" value="0.00" step="0.01" oninput="calculateTotals()"></td>
-                <td class="text-center"><input type="text" class="editable text-center tax-rate" value="5%" oninput="calculateTotals()"></td>
-                <td class="text-right vat-amount">0.00 AED</td>
-                <td class="text-right row-amount">0.00 AED</td>
-                <td class="text-center no-print"><button class="btn btn-danger" onclick="deleteRow(this)">×</button></td>
+                <td><input type="number" class="editable price text-left" value="0.00" step="0.01" oninput="calcTotals()"></td>
+                <td class="text-center"><input type="text" class="editable text-center tax-rate" value="5%" oninput="calcTotals()"></td>
+                <td class="text-left vat-amount">0.00 AED</td>
+                <td class="text-left row-amount">0.00 AED</td>
+                <td class="no-print"><button class="btn btn-danger" onclick="deleteRow(this)">×</button></td>
             `;
-            tbody.appendChild(row);
-            calculateTotals();
+            tbody.appendChild(tr);
+            calcTotals();
         }
 
         function deleteRow(btn) {
             const row = btn.closest('tr');
             if(document.querySelectorAll('#invoice-items tr').length > 1) {
                 row.remove();
-                calculateTotals();
+                calcTotals();
             } else {
-                alert('يجب أن تحتوي الفاتورة على صنف واحد على الأقل.');
+                alert('يجب أن تحتوي الفاتورة على سطر واحد على الأقل.');
             }
         }
 
-        function calculateTotals() {
-            const rows = document.querySelectorAll('#invoice-items tr');
-            let untaxedSum = 0;
-            let vatSum = 0;
-            
-            rows.iterrows = rows.forEach(row => {
+        function calcTotals() {
+            let subtotal = 0;
+            let totalVat = 0;
+
+            document.querySelectorAll('#invoice-items tr').forEach(row => {
                 const qty = parseFloat(row.querySelector('.qty').value) || 0;
-                const price = parseFloat(row.querySelector('.price').value) ||0;
-                const taxRateStr = row.querySelector('.tax-rate').value;
-                const taxRate = parseFloat(taxRateStr.replace('%', '')) || 0;
-                
-                const amount = qty * price;
-                const vat = amount * (taxRate / 100);
-                
-                untaxedSum += amount;
-                vatSum += vat;
-                
-                row.querySelector('.vat-amount').textContent = vat.toFixed(2) + ' AED';
-                row.querySelector('.row-amount').textContent = amount.toFixed(2) + ' AED';
+                const price = parseFloat(row.querySelector('.price').value) || 0;
+                const taxStr = row.querySelector('.tax-rate').value;
+                const taxRate = parseFloat(taxStr.replace('%', '')) || 0;
+
+                const lineNet = qty * price;
+                const lineVat = lineNet * (taxRate / 100);
+                const lineTotal = lineNet + lineVat;
+
+                subtotal += lineNet;
+                totalVat += lineVat;
+
+                row.querySelector('.vat-amount').textContent = lineVat.toFixed(2) + ' AED';
+                row.querySelector('.row-amount').textContent = lineTotal.toFixed(2) + ' AED';
             });
-            
-            const grandTotal = untaxedSum + vatSum;
-            
-            document.getElementById('untaxed-total').textContent = untaxedSum.toFixed(2) + ' AED';
-            document.getElementById('vat-total').textContent = vatSum.toFixed(2) + ' AED';
+
+            const grandTotal = subtotal + totalVat;
+
+            document.getElementById('subtotal').textContent = subtotal.toFixed(2) + ' AED';
+            document.getElementById('total-vat').textContent = totalVat.toFixed(2) + ' AED';
             document.getElementById('grand-total').textContent = grandTotal.toFixed(2) + ' AED';
         }
 
-        calculateTotals();
+        calcTotals();
     </script>
 </body>
 </html>
