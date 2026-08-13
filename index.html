@@ -2,7 +2,7 @@
 <html lang="ar" dir="rtl" id="html-root">
 <head>
     <meta charset="UTF-8">
-    <title>UAE Electronic Tax Invoice</title>
+    <title>نظام الفواتير وإيصالات الأمانة</title>
     <style>
         :root {
             --primary: #0f4c81;
@@ -24,6 +24,38 @@
             max-width: 900px;
             margin: 0 auto;
         }
+        
+        /* Navigation Tabs */
+        .nav-tabs {
+            display: flex;
+            gap: 10px;
+            margin-bottom: 20px;
+            background: #fff;
+            padding: 10px;
+            border-radius: 8px;
+            box-shadow: 0 4px 6px rgba(0,0,0,0.05);
+        }
+        .tab-btn {
+            background-color: var(--bg-light);
+            color: var(--text-main);
+            border: 1px solid var(--border);
+            padding: 12px 24px;
+            border-radius: 6px;
+            cursor: pointer;
+            font-size: 16px;
+            font-weight: bold;
+            transition: all 0.2s;
+            flex-grow: 1;
+        }
+        .tab-btn:hover {
+            background-color: #e2e8f0;
+        }
+        .tab-btn.active {
+            background-color: var(--primary);
+            color: white;
+            border-color: var(--primary);
+        }
+
         .control-panel {
             background: #ffffff;
             padding: 15px 25px;
@@ -55,13 +87,15 @@
         .btn-danger { background-color: #e53e3e; padding: 6px 12px; font-size: 12px; }
         .btn-danger:hover { background-color: #c53030; }
 
-        .invoice-box {
+        .document-box {
             background: #ffffff;
             border-radius: 10px;
             box-shadow: 0 10px 25px rgba(0,0,0,0.08);
             padding: 40px;
             position: relative;
         }
+
+        /* Invoice Specific */
         .invoice-header {
             display: flex;
             justify-content: space-between;
@@ -136,6 +170,15 @@
             border-radius: 4px;
             background: #fff;
         }
+        
+        .inline-editable {
+            display: inline-block;
+            width: auto;
+            min-width: 150px;
+            border-bottom: 1px dashed var(--text-main);
+            border-radius: 0;
+            padding: 2px 5px;
+        }
 
         .meta-row {
             display: flex;
@@ -206,6 +249,36 @@
             background-color: var(--bg-light);
         }
 
+        /* Trust Receipt Specific */
+        .receipt-content {
+            line-height: 2.2;
+            font-size: 18px;
+        }
+        .receipt-header {
+            text-align: center;
+            margin-bottom: 40px;
+        }
+        .receipt-header h1 {
+            color: var(--primary);
+            text-decoration: underline;
+            margin-bottom: 5px;
+        }
+        .receipt-signatures {
+            display: flex;
+            justify-content: space-between;
+            margin-top: 60px;
+            padding-top: 20px;
+            border-top: 1px solid var(--border);
+        }
+        .sig-box {
+            text-align: center;
+            width: 45%;
+        }
+        .sig-box p {
+            margin-bottom: 30px;
+            font-weight: bold;
+        }
+
         .notification {
             position: fixed;
             bottom: 20px;
@@ -223,42 +296,51 @@
 
         @media print {
             body { background: white; padding: 0; }
-            .control-panel, .no-print, .btn-danger { display: none !important; }
-            .invoice-box { box-shadow: none; padding: 0; }
-            input.editable, select.editable, textarea.editable {
+            .nav-tabs, .control-panel, .no-print, .btn-danger { display: none !important; }
+            .document-box { box-shadow: none; padding: 0; border: none; }
+            input.editable, select.editable, textarea.editable, input.inline-editable {
                 border: none !important;
                 background: transparent !important;
                 padding: 0 !important;
+            }
+            .inline-editable {
+                border-bottom: 1px solid #000 !important; /* Keep a solid line for empty print fields */
             }
         }
     </style>
 </head>
 <body>
     <div class="container">
+        <!-- Navigation Tabs -->
+        <div class="nav-tabs no-print">
+            <button class="tab-btn active" id="tab-invoice" onclick="switchTab('invoice')">🧾 الفاتورة الضريبية</button>
+            <button class="tab-btn" id="tab-receipt" onclick="switchTab('receipt')">🤝 وصل أمانة</button>
+        </div>
+
         <!-- Control Panel -->
         <div class="control-panel no-print">
             <div style="display: flex; gap: 10px; align-items: center; flex-wrap: wrap;">
-                <button class="btn btn-secondary" onclick="toggleLanguage()" id="lang-btn">🌐 English</button>
-                <button class="btn btn-success" onclick="saveData()">💾 <span data-i18n="saveBtnText">حفظ البيانات</span></button>
+                <button class="btn btn-secondary" onclick="toggleLanguage()" id="lang-btn" style="display: none;">🌐 English</button> <!-- Hidden for now to focus on Arabic mostly, unhide if needed -->
+                <button class="btn btn-success" onclick="saveData()">💾 حفظ البيانات</button>
             </div>
             <div style="display: flex; gap: 10px; align-items: center; flex-wrap: wrap;">
-                <button class="btn btn-secondary" onclick="addRow()"><span data-i18n="addLineText">+ إضافة صنف</span></button>
-                <button class="btn" onclick="window.print()">🖨️ <span data-i18n="printBtnText">طباعة / حفظ PDF</span></button>
+                <button class="btn btn-secondary" id="add-line-btn" onclick="addRow()">+ إضافة صنف</button>
+                <button class="btn" onclick="window.print()">🖨️ طباعة / حفظ PDF</button>
             </div>
         </div>
 
-        <!-- Invoice Box -->
-        <div class="invoice-box">
+        <!-- ================= INVOICE SECTION ================= -->
+        <div class="document-box" id="section-invoice">
             <!-- Header -->
             <div class="invoice-header">
                 <div class="company-info">
                     <h2><input type="text" class="editable" id="supplier-name" value="اسم الشركة الموردة / Supplier Company LLC"></h2>
                     <p id="supplier-address">الشارقة، الإمارات العربية المتحدة | Sharjah, UAE</p>
-                    <p><strong data-i18n="trnLabel">رقم التسجيل الضريبي (TRN):</strong> <input type="text" class="editable" id="supplier-trn" value="100012345678903" style="width: 180px; display:inline-block;"></p>
+                    <p><strong>رقم التسجيل الضريبي (TRN):</strong> <input type="text" class="editable" id="supplier-trn" value="100012345678903" style="width: 180px; display:inline-block;"></p>
                 </div>
                 <div class="invoice-title-box">
-                    <h1 data-i18n="invoiceTitle">فاتورة ضريبية</h1>
-                    <span data-i18n="invoiceSubtitle">TAX INVOICE</span>
+                    <h1>فاتورة ضريبية</h1>
+                    <span>TAX INVOICE</span>
                     <div style="margin-top: 10px;">
                         <input type="text" class="editable text-align-side" id="invoice-number" value="INV-2026-001" style="font-weight: bold; font-size: 16px; width: 160px;">
                     </div>
@@ -268,32 +350,32 @@
             <!-- Meta & Parties -->
             <div class="parties-grid">
                 <div class="party-card">
-                    <h3 data-i18n="customerDetailsTitle">بيانات العميل (Customer Details)</h3>
+                    <h3>بيانات العميل (Customer Details)</h3>
                     <div class="meta-row" style="margin-top: 10px;">
-                        <span class="meta-label" data-i18n="customerNameLabel">اسم العميل:</span>
+                        <span class="meta-label">اسم العميل:</span>
                         <span class="meta-val"><input type="text" class="editable" id="cust-name" value="شركة رعيب بابات للتجارة العامة ذ.م.م"></span>
                     </div>
                     <div class="meta-row">
-                        <span class="meta-label" data-i18n="addressLabel">العنوان:</span>
+                        <span class="meta-label">العنوان:</span>
                         <span class="meta-val"><input type="text" class="editable" id="cust-address" value="دبي، ص.ب 124640، الإمارات"></span>
                     </div>
                     <div class="meta-row">
-                        <span class="meta-label" data-i18n="custTrnLabel">رقم التسجيل (TRN):</span>
+                        <span class="meta-label">رقم التسجيل (TRN):</span>
                         <span class="meta-val"><input type="text" class="editable" id="cust-trn" value="100053126700003"></span>
                     </div>
                 </div>
                 <div class="party-card">
-                    <h3 data-i18n="invoiceDetailsTitle">معلومات الفاتورة (Invoice Details)</h3>
+                    <h3>معلومات الفاتورة (Invoice Details)</h3>
                     <div class="meta-row" style="margin-top: 10px;">
-                        <span class="meta-label" data-i18n="issueDateLabel">تاريخ الإصدار:</span>
-                        <span class="meta-val"><input type="text" class="editable" id="inv-date" value="2026-08-10"></span>
+                        <span class="meta-label">تاريخ الإصدار:</span>
+                        <span class="meta-val"><input type="date" class="editable" id="inv-date"></span>
                     </div>
                     <div class="meta-row">
-                        <span class="meta-label" data-i18n="supplyDateLabel">تاريخ التوريد:</span>
-                        <span class="meta-val"><input type="text" class="editable" id="sup-date" value="2026-08-10"></span>
+                        <span class="meta-label">تاريخ التوريد:</span>
+                        <span class="meta-val"><input type="date" class="editable" id="sup-date"></span>
                     </div>
                     <div class="meta-row">
-                        <span class="meta-label" data-i18n="paymentTermsLabel">شروط الدفع:</span>
+                        <span class="meta-label">شروط الدفع:</span>
                         <span class="meta-val"><input type="text" class="editable" id="pay-terms" value="نقداً (Cash)"></span>
                     </div>
                 </div>
@@ -303,13 +385,13 @@
             <table class="items-table">
                 <thead>
                     <tr>
-                        <th style="width: 38%;" data-i18n="thDesc">الوصف / Description</th>
-                        <th style="width: 10%;" class="text-center" data-i18n="thQty">الكمية / Qty</th>
-                        <th style="width: 10%;" data-i18n="thUom">الوحدة / UoM</th>
-                        <th style="width: 12%;" class="text-align-side" data-i18n="thPrice">السعر / Price</th>
-                        <th style="width: 8%;" class="text-center" data-i18n="thTax">الضريبة / Tax</th>
-                        <th style="width: 11%;" class="text-align-side" data-i18n="thVat">مبلغ الضريبة / VAT</th>
-                        <th style="width: 11%;" class="text-align-side" data-i18n="thTotal">المجموع / Total</th>
+                        <th style="width: 38%;">الوصف / Description</th>
+                        <th style="width: 10%;" class="text-center">الكمية / Qty</th>
+                        <th style="width: 10%;">الوحدة / UoM</th>
+                        <th style="width: 12%;" class="text-align-side">السعر / Price</th>
+                        <th style="width: 8%;" class="text-center">الضريبة / Tax</th>
+                        <th style="width: 11%;" class="text-align-side">مبلغ الضريبة / VAT</th>
+                        <th style="width: 11%;" class="text-align-side">المجموع / Total</th>
                         <th style="width: 3%;" class="no-print"></th>
                     </tr>
                 </thead>
@@ -328,114 +410,122 @@
             </table>
 
             <div class="no-print" style="margin-bottom: 20px;">
-                <button class="btn btn-secondary" style="font-size: 12px; padding: 6px 14px;" onclick="addRow()"><span data-i18n="addLineText">+ إضافة صنف</span></button>
+                <button class="btn btn-secondary" style="font-size: 12px; padding: 6px 14px;" onclick="addRow()">+ إضافة صنف</button>
             </div>
 
             <!-- Summary Section -->
             <div class="summary-section">
                 <table class="totals-table">
                     <tr>
-                        <td data-i18n="subtotalLabel">المجموع غير الخاضع للضريبة (Untaxed Amount):</td>
+                        <td>المجموع غير الخاضع للضريبة (Untaxed Amount):</td>
                         <td class="text-align-side" id="subtotal">650.00 AED</td>
                     </tr>
                     <tr>
-                        <td data-i18n="vatLabel">إجمالي ضريبة القيمة المضافة 5% (Total VAT):</td>
+                        <td>إجمالي ضريبة القيمة المضافة 5% (Total VAT):</td>
                         <td class="text-align-side" id="total-vat">32.50 AED</td>
                     </tr>
                     <tr>
-                        <td data-i18n="grandTotalLabel">المجموع الإجمالي (Grand Total):</td>
+                        <td>المجموع الإجمالي (Grand Total):</td>
                         <td class="text-align-side" id="grand-total">682.50 AED</td>
                     </tr>
                 </table>
             </div>
         </div>
+
+        <!-- ================= TRUST RECEIPT SECTION ================= -->
+        <div class="document-box" id="section-receipt" style="display: none;">
+            <div class="receipt-header">
+                <h1>إيصال أمانة</h1>
+                <p style="color: #718096; font-size: 14px;">(Trust Receipt)</p>
+            </div>
+            
+            <div class="receipt-content">
+                <div style="display: flex; gap: 15px; align-items: center; margin-bottom: 30px; font-weight: bold; background: var(--bg-light); padding: 15px; border-radius: 8px; border: 1px solid var(--border);">
+                    <span>المبلغ بالأرقام:</span>
+                    <input type="text" class="editable inline-editable" id="rec-amount-num" value="0.00" style="width: 150px; text-align: center; font-size: 18px; color: var(--primary);">
+                    <span>درهم إماراتي</span>
+                </div>
+
+                <p>
+                    استلمت أنا الموقع أدناه السيد/ة: 
+                    <input type="text" class="editable inline-editable" id="rec-receiver-name" placeholder="اسم المستلم..." style="width: 60%;">
+                </p>
+                <p>
+                    الجنسية: <input type="text" class="editable inline-editable" id="rec-nationality" style="width: 20%;">
+                    ، ورقم الهوية / الجواز: <input type="text" class="editable inline-editable" id="rec-id" style="width: 40%;">
+                </p>
+                <p>
+                    العنوان ورقم الهاتف: <input type="text" class="editable inline-editable" id="rec-contact" style="width: 70%;">
+                </p>
+                
+                <p style="margin-top: 30px;">
+                    من السيد/ة (الطرف المسلِّم):
+                    <input type="text" class="editable inline-editable" id="rec-giver-name" placeholder="اسم الشخص الذي سلم المبلغ..." style="width: 60%;">
+                </p>
+                <p>
+                    مبلغاً وقدره (بالحروف): 
+                    <input type="text" class="editable inline-editable" id="rec-amount-text" placeholder="فقط ... درهم إماراتي لا غير" style="width: 70%;">
+                </p>
+                
+                <p style="margin-top: 30px; text-align: justify;">
+                    وذلك على سبيل الأمانة لتوصيله وتسليمه إلى السيد/ة:
+                    <input type="text" class="editable inline-editable" id="rec-third-party" placeholder="اسم الطرف الثالث (إن وجد)..." style="width: 50%;">
+                </p>
+                <p style="text-align: justify; color: #c53030; font-weight: bold;">
+                    وأقر بأن هذا المبلغ في ذمتي بموجب إيصال أمانة، وفي حال تخلفي عن رده أو تسليمه عند الطلب، أكون مبدداً وخائناً للأمانة وأتحمل كافة المساءلات القانونية والجنائية المترتبة على ذلك.
+                </p>
+                
+                <div class="receipt-signatures">
+                    <div class="sig-box">
+                        <p>تاريخ التحرير</p>
+                        <input type="date" class="editable" id="rec-date" style="text-align: center;">
+                    </div>
+                    <div class="sig-box">
+                        <p>توقيع المستلم / البصمة</p>
+                        <div style="height: 60px; border-bottom: 1px dashed var(--text-main); margin-bottom: 10px;"></div>
+                        <span style="font-size: 12px; color: #718096;">(التوقيع)</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+
     </div>
 
-    <div class="notification" id="notification" data-i18n="savedSuccess">تم حفظ البيانات بنجاح!</div>
+    <div class="notification" id="notification">تم حفظ البيانات بنجاح!</div>
 
     <script>
-        let currentLang = 'ar';
+        // Set today's date automatically
+        const today = new Date().toISOString().split('T')[0];
+        document.getElementById('inv-date').value = today;
+        document.getElementById('sup-date').value = today;
+        document.getElementById('rec-date').value = today;
 
-        const translations = {
-            ar: {
-                langBtn: "🌐 English",
-                saveBtnText: "حفظ البيانات",
-                addLineText: "+ إضافة صنف",
-                printBtnText: "طباعة / حفظ PDF",
-                trnLabel: "رقم التسجيل الضريبي (TRN):",
-                invoiceTitle: "فاتورة ضريبية",
-                invoiceSubtitle: "TAX INVOICE",
-                customerDetailsTitle: "بيانات العميل (Customer Details)",
-                customerNameLabel: "اسم العميل:",
-                addressLabel: "العنوان:",
-                custTrnLabel: "رقم التسجيل (TRN):",
-                invoiceDetailsTitle: "معلومات الفاتورة (Invoice Details)",
-                issueDateLabel: "تاريخ الإصدار:",
-                supplyDateLabel: "تاريخ التوريد:",
-                paymentTermsLabel: "شروط الدفع:",
-                thDesc: "الوصف / Description",
-                thQty: "الكمية / Qty",
-                thUom: "الوحدة / UoM",
-                thPrice: "السعر / Price",
-                thTax: "الضريبة / Tax",
-                thVat: "مبلغ الضريبة / VAT",
-                thTotal: "المجموع / Total",
-                subtotalLabel: "المجموع غير الخاضع للضريبة (Untaxed Amount):",
-                vatLabel: "إجمالي ضريبة القيمة المضافة 5% (Total VAT):",
-                grandTotalLabel: "المجموع الإجمالي (Grand Total):",
-                savedSuccess: "تم حفظ البيانات بنجاح في المتصفح!"
-            },
-            en: {
-                langBtn: "🌐 العربية",
-                saveBtnText: "Save Data",
-                addLineText: "+ Add Line",
-                printBtnText: "Print / Save PDF",
-                trnLabel: "TRN:",
-                invoiceTitle: "Tax Invoice",
-                invoiceSubtitle: "فاتورة ضريبية",
-                customerDetailsTitle: "Customer Details",
-                customerNameLabel: "Customer Name:",
-                addressLabel: "Address:",
-                custTrnLabel: "TRN:",
-                invoiceDetailsTitle: "Invoice Details",
-                issueDateLabel: "Issue Date:",
-                supplyDateLabel: "Supply Date:",
-                paymentTermsLabel: "Payment Terms:",
-                thDesc: "Description",
-                thQty: "Qty",
-                thUom: "UoM",
-                thPrice: "Price",
-                thTax: "Tax",
-                thVat: "VAT Amount",
-                thTotal: "Total",
-                subtotalLabel: "Untaxed Amount:",
-                vatLabel: "Total VAT 5%:",
-                grandTotalLabel: "Grand Total:",
-                savedSuccess: "Data saved successfully in browser!"
+        // Tab Switching Logic
+        function switchTab(tab) {
+            // Update buttons
+            document.getElementById('tab-invoice').classList.remove('active');
+            document.getElementById('tab-receipt').classList.remove('active');
+            document.getElementById('tab-' + tab).classList.add('active');
+
+            // Update sections
+            document.getElementById('section-invoice').style.display = 'none';
+            document.getElementById('section-receipt').style.display = 'none';
+            document.getElementById('section-' + tab).style.display = 'block';
+
+            // Show/hide specific control buttons based on tab
+            if (tab === 'receipt') {
+                document.getElementById('add-line-btn').style.display = 'none';
+            } else {
+                document.getElementById('add-line-btn').style.display = 'inline-block';
             }
-        };
-
-        function toggleLanguage() {
-            currentLang = currentLang === 'ar' ? 'en' : 'ar';
-            const htmlRoot = document.getElementById('html-root');
-            htmlRoot.setAttribute('dir', currentLang === 'ar' ? 'rtl' : 'ltr');
-            htmlRoot.setAttribute('lang', currentLang);
-
-            document.querySelectorAll('[data-i18n]').forEach(el => {
-                const key = el.getAttribute('data-i18n');
-                if (translations[currentLang][key]) {
-                    el.textContent = translations[currentLang][key];
-                }
-            });
-
-            document.getElementById('lang-btn').textContent = translations[currentLang].langBtn;
         }
 
+        // Invoice functions
         function addRow() {
             const tbody = document.getElementById('invoice-items');
             const tr = document.createElement('tr');
             tr.innerHTML = `
-                <td><input type="text" class="editable" value="${currentLang === 'ar' ? 'صنف جديد' : 'New Item'}"></td>
+                <td><input type="text" class="editable" value="صنف جديد"></td>
                 <td class="text-center"><input type="number" class="editable qty text-center" value="1.00" step="0.01" oninput="calcTotals()"></td>
                 <td><input type="text" class="editable" value="Units"></td>
                 <td><input type="number" class="editable price text-align-side" value="0.00" step="0.01" oninput="calcTotals()"></td>
@@ -454,7 +544,7 @@
                 row.remove();
                 calcTotals();
             } else {
-                alert(currentLang === 'ar' ? 'يجب أن تحتوي الفاتورة على سطر واحد على الأقل.' : 'Invoice must contain at least one line.');
+                alert('يجب أن تحتوي الفاتورة على سطر واحد على الأقل.');
             }
         }
 
@@ -487,18 +577,31 @@
         }
 
         function saveData() {
-            const data = {
+            // Save Invoice
+            const invoiceData = {
                 supplierName: document.getElementById('supplier-name').value,
                 supplierTrn: document.getElementById('supplier-trn').value,
                 invNumber: document.getElementById('invoice-number').value,
                 custName: document.getElementById('cust-name').value,
                 custAddress: document.getElementById('cust-address').value,
                 custTrn: document.getElementById('cust-trn').value,
-                invDate: document.getElementById('inv-date').value,
-                supDate: document.getElementById('sup-date').value,
                 payTerms: document.getElementById('pay-terms').value,
             };
-            localStorage.setItem('saved_invoice_data', JSON.stringify(data));
+            
+            // Save Receipt
+            const receiptData = {
+                amountNum: document.getElementById('rec-amount-num').value,
+                receiverName: document.getElementById('rec-receiver-name').value,
+                nationality: document.getElementById('rec-nationality').value,
+                idNum: document.getElementById('rec-id').value,
+                contact: document.getElementById('rec-contact').value,
+                giverName: document.getElementById('rec-giver-name').value,
+                amountText: document.getElementById('rec-amount-text').value,
+                thirdParty: document.getElementById('rec-third-party').value,
+            };
+
+            localStorage.setItem('saved_invoice_data', JSON.stringify(invoiceData));
+            localStorage.setItem('saved_receipt_data', JSON.stringify(receiptData));
             
             const notification = document.getElementById('notification');
             notification.style.display = 'block';
@@ -508,19 +611,31 @@
         }
 
         window.onload = function() {
-            const saved = localStorage.getItem('saved_invoice_data');
-            if(saved) {
-                const data = JSON.parse(saved);
+            const savedInvoice = localStorage.getItem('saved_invoice_data');
+            if(savedInvoice) {
+                const data = JSON.parse(savedInvoice);
                 document.getElementById('supplier-name').value = data.supplierName || '';
                 document.getElementById('supplier-trn').value = data.supplierTrn || '';
                 document.getElementById('invoice-number').value = data.invNumber || '';
                 document.getElementById('cust-name').value = data.custName || '';
                 document.getElementById('cust-address').value = data.custAddress || '';
                 document.getElementById('cust-trn').value = data.custTrn || '';
-                document.getElementById('inv-date').value = data.invDate || '';
-                document.getElementById('sup-date').value = data.supDate || '';
                 document.getElementById('pay-terms').value = data.payTerms || '';
             }
+
+            const savedReceipt = localStorage.getItem('saved_receipt_data');
+            if(savedReceipt) {
+                const data = JSON.parse(savedReceipt);
+                document.getElementById('rec-amount-num').value = data.amountNum || '';
+                document.getElementById('rec-receiver-name').value = data.receiverName || '';
+                document.getElementById('rec-nationality').value = data.nationality || '';
+                document.getElementById('rec-id').value = data.idNum || '';
+                document.getElementById('rec-contact').value = data.contact || '';
+                document.getElementById('rec-giver-name').value = data.giverName || '';
+                document.getElementById('rec-amount-text').value = data.amountText || '';
+                document.getElementById('rec-third-party').value = data.thirdParty || '';
+            }
+
             calcTotals();
         };
     </script>
